@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./App.css";
 
 function App() {
@@ -6,28 +6,6 @@ function App() {
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  // Install instructions
-  const [showInstallHint, setShowInstallHint] = useState(false);
-  const [os, setOs] = useState(null);
-
-  // Detect OS (but don't show yet)
-  useEffect(() => {
-    const ua = navigator.userAgent.toLowerCase();
-    if (/iphone|ipad|ipod/.test(ua)) setOs("ios");
-    else if (/android/.test(ua)) setOs("android");
-  }, []);
-
-  // Show hint ONLY after conversion
-  const triggerInstallHint = () => {
-    const standalone =
-      window.matchMedia("(display-mode: standalone)").matches ||
-      window.navigator.standalone === true;
-
-    if (!standalone && (os === "ios" || os === "android")) {
-      setShowInstallHint(true);
-    }
-  };
 
   const handleConvert = async (e) => {
     e.preventDefault();
@@ -54,9 +32,6 @@ function App() {
 
       const data = await res.json();
       setResults(data);
-
-      // Show install hint AFTER conversion
-      triggerInstallHint();
     } catch (err) {
       console.error(err);
       setError("Something went wrong converting the link.");
@@ -73,12 +48,13 @@ function App() {
     if (type === "exact") return "Exact match";
     if (type === "high") return "High confidence match";
     if (type === "medium") return "Medium confidence – looks right";
-    if (type === "low") return "Low confidence – using search results";
-    if (type === "very_low") return "Very low confidence – using search only";
+    if (type === "low") return "Low confidence – using search";
+    if (type === "very_low") return "Very low confidence – using search";
+
     if (c >= 90) return "Exact match";
-    if (c >= 75) return "High confidence match";
+    if (c >= 75) return "High confidence";
     if (c >= 50) return "Medium confidence";
-    return "Low confidence – using search";
+    return "Low confidence – search mode";
   };
 
   const isSearchMode = () => {
@@ -90,31 +66,6 @@ function App() {
     <div className="app">
       <h1>YouTube → Music Link Converter</h1>
       <p className="subtitle">Paste a YouTube link and get Spotify & Apple Music matches.</p>
-
-      {/* ---- SUBTLE INSTALL BANNER (AFTER FIRST USE) ---- */}
-      {showInstallHint && (
-        <div className="install-hint">
-          {os === "ios" && (
-            <p>
-              💡 <strong>Tip:</strong> Add this app to your Home Screen:<br />
-              Share → <strong>Add to Home Screen</strong>
-            </p>
-          )}
-          {os === "android" && (
-            <p>
-              💡 <strong>Tip:</strong> Install this app:<br />
-              Menu (⋮) → <strong>Install App</strong>
-            </p>
-          )}
-          <button
-            className="hint-dismiss"
-            onClick={() => setShowInstallHint(false)}
-          >
-            ✕
-          </button>
-        </div>
-      )}
-      {/* ------------------------------------------------ */}
 
       <form onSubmit={handleConvert} className="card">
         <label htmlFor="youtube">YouTube URL</label>
@@ -144,6 +95,7 @@ function App() {
           </div>
 
           <div className="links">
+            {/* Spotify */}
             {results.spotifyUrl && (
               <a
                 className="link-button spotify"
@@ -157,6 +109,7 @@ function App() {
               </a>
             )}
 
+            {/* Apple Music */}
             {results.appleMusicUrl && (
               <a
                 className="link-button apple"
@@ -165,11 +118,12 @@ function App() {
                 rel="noreferrer"
               >
                 {isSearchMode()
-                  ? `Apple Music • search (${results.confidence ?? 0}%)`
-                  : `Apple Music • ${results.confidence ?? 0}%`}
+                  ? `Apple • search (${results.confidence ?? 0}%)`
+                  : `Apple • ${results.confidence ?? 0}%`}
               </a>
             )}
 
+            {/* SoundCloud */}
             {results.soundCloudUrl && (
               <a
                 className="link-button soundcloud"
