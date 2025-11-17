@@ -39,3 +39,15 @@ self.addEventListener("fetch", event => {
     })
   );
 });
+self.addEventListener("install", (e) => {
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (e) => {
+  clients.claim();
+});
+
+self.addEventListener("fetch", (event) => {
+  // simplest pass-through fetch
+  event.respondWith(fetch(event.request));
+});
