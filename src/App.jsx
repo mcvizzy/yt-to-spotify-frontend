@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
@@ -6,6 +6,31 @@ function App() {
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [showPwaHelp, setShowPwaHelp] = useState(false);
+  const [os, setOs] = useState(null);
+
+  // Detect OS + whether standalone PWA mode is active
+  useEffect(() => {
+    const ua = window.navigator.userAgent.toLowerCase();
+
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true;
+
+    if (!isStandalone) {
+      // Detect iOS
+      if (/iphone|ipad|ipod/.test(ua)) setOs("ios");
+
+      // Detect Android
+      else if (/android/.test(ua)) setOs("android");
+
+      // Only show instructions if on mobile OS
+      if (/iphone|ipad|ipod|android/.test(ua)) {
+        setShowPwaHelp(true);
+      }
+    }
+  }, []);
 
   const handleConvert = async (e) => {
     e.preventDefault();
@@ -64,7 +89,39 @@ function App() {
   return (
     <div className="app">
       <h1>YouTube → Music Link Converter</h1>
-      <p className="subtitle">Paste a YouTube link and get Spotify &amp; Apple Music matches.</p>
+      <p className="subtitle">Paste a YouTube link and get Spotify & Apple matches.</p>
+
+      {/* ---------- INSTALL INSTRUCTIONS BANNER ---------- */}
+      {showPwaHelp && (
+        <div className="install-banner">
+          {os === "ios" && (
+            <>
+              <p><strong>Install this app on your Home Screen:</strong></p>
+              <p>1. Tap the <strong>Share</strong> button (square with arrow)</p>
+              <p>2. Scroll down</p>
+              <p>3. Tap <strong>Add to Home Screen</strong></p>
+              <p>4. Open it like a normal app!</p>
+            </>
+          )}
+
+          {os === "android" && (
+            <>
+              <p><strong>Install this app:</strong></p>
+              <p>1. Tap the <strong>⋮ menu</strong> in Chrome</p>
+              <p>2. Tap <strong>Install App</strong></p>
+              <p>3. Done — it works offline & opens full screen!</p>
+            </>
+          )}
+
+          <button
+            className="dismiss-install"
+            onClick={() => setShowPwaHelp(false)}
+          >
+            Got it
+          </button>
+        </div>
+      )}
+      {/* ------------------------------------------------ */}
 
       <form onSubmit={handleConvert} className="card">
         <label htmlFor="youtube">YouTube URL</label>
@@ -86,15 +143,11 @@ function App() {
         <div className="result card">
           <h2>Results</h2>
 
-          <p>
-            <strong>YouTube Title:</strong> {results.youtubeTitle}
-          </p>
-          <p>
-            <strong>Search Query:</strong> {results.cleanedQuery}
-          </p>
+          <p><strong>YouTube Title:</strong> {results.youtubeTitle}</p>
+          <p><strong>Search Query:</strong> {results.cleanedQuery}</p>
 
           <div className={`match-pill match-pill-${results.matchType || "unknown"}`}>
-            {getConfidenceLabel()} • {results.confidence ?? 0}% match
+            {getConfidenceLabel()} • {results.confidence ?? 0}%
           </div>
 
           <div className="links">
@@ -107,7 +160,7 @@ function App() {
               >
                 {isSearchMode()
                   ? `Spotify • search (${results.confidence ?? 0}%)`
-                  : `Spotify • ${results.confidence ?? 0}% match`}
+                  : `Spotify • ${results.confidence ?? 0}%`}
               </a>
             )}
 
@@ -120,7 +173,7 @@ function App() {
               >
                 {isSearchMode()
                   ? `Apple Music • search (${results.confidence ?? 0}%)`
-                  : `Apple Music • ${results.confidence ?? 0}% match`}
+                  : `Apple Music • ${results.confidence ?? 0}%`}
               </a>
             )}
 
