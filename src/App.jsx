@@ -7,30 +7,27 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [showPwaHelp, setShowPwaHelp] = useState(false);
+  // Install instructions
+  const [showInstallHint, setShowInstallHint] = useState(false);
   const [os, setOs] = useState(null);
 
-  // Detect OS + whether standalone PWA mode is active
+  // Detect OS (but don't show yet)
   useEffect(() => {
-    const ua = window.navigator.userAgent.toLowerCase();
+    const ua = navigator.userAgent.toLowerCase();
+    if (/iphone|ipad|ipod/.test(ua)) setOs("ios");
+    else if (/android/.test(ua)) setOs("android");
+  }, []);
 
-    const isStandalone =
+  // Show hint ONLY after conversion
+  const triggerInstallHint = () => {
+    const standalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       window.navigator.standalone === true;
 
-    if (!isStandalone) {
-      // Detect iOS
-      if (/iphone|ipad|ipod/.test(ua)) setOs("ios");
-
-      // Detect Android
-      else if (/android/.test(ua)) setOs("android");
-
-      // Only show instructions if on mobile OS
-      if (/iphone|ipad|ipod|android/.test(ua)) {
-        setShowPwaHelp(true);
-      }
+    if (!standalone && (os === "ios" || os === "android")) {
+      setShowInstallHint(true);
     }
-  }, []);
+  };
 
   const handleConvert = async (e) => {
     e.preventDefault();
@@ -57,6 +54,9 @@ function App() {
 
       const data = await res.json();
       setResults(data);
+
+      // Show install hint AFTER conversion
+      triggerInstallHint();
     } catch (err) {
       console.error(err);
       setError("Something went wrong converting the link.");
@@ -89,35 +89,28 @@ function App() {
   return (
     <div className="app">
       <h1>YouTube → Music Link Converter</h1>
-      <p className="subtitle">Paste a YouTube link and get Spotify & Apple matches.</p>
+      <p className="subtitle">Paste a YouTube link and get Spotify & Apple Music matches.</p>
 
-      {/* ---------- INSTALL INSTRUCTIONS BANNER ---------- */}
-      {showPwaHelp && (
-        <div className="install-banner">
+      {/* ---- SUBTLE INSTALL BANNER (AFTER FIRST USE) ---- */}
+      {showInstallHint && (
+        <div className="install-hint">
           {os === "ios" && (
-            <>
-              <p><strong>Install this app on your Home Screen:</strong></p>
-              <p>1. Tap the <strong>Share</strong> button (square with arrow)</p>
-              <p>2. Scroll down</p>
-              <p>3. Tap <strong>Add to Home Screen</strong></p>
-              <p>4. Open it like a normal app!</p>
-            </>
+            <p>
+              💡 <strong>Tip:</strong> Add this app to your Home Screen:<br />
+              Share → <strong>Add to Home Screen</strong>
+            </p>
           )}
-
           {os === "android" && (
-            <>
-              <p><strong>Install this app:</strong></p>
-              <p>1. Tap the <strong>⋮ menu</strong> in Chrome</p>
-              <p>2. Tap <strong>Install App</strong></p>
-              <p>3. Done — it works offline & opens full screen!</p>
-            </>
+            <p>
+              💡 <strong>Tip:</strong> Install this app:<br />
+              Menu (⋮) → <strong>Install App</strong>
+            </p>
           )}
-
           <button
-            className="dismiss-install"
-            onClick={() => setShowPwaHelp(false)}
+            className="hint-dismiss"
+            onClick={() => setShowInstallHint(false)}
           >
-            Got it
+            ✕
           </button>
         </div>
       )}
