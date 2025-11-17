@@ -40,96 +40,31 @@ function App() {
     }
   };
 
-  const renderResults = () => {
-    if (!results) return null;
+  const getConfidenceLabel = () => {
+    if (!results) return "";
+    const c = results.confidence ?? 0;
+    const type = results.matchType;
 
-    const confidence = results.confidence ?? 0;
-    const highConfidence = confidence >= 75;
+    if (type === "exact") return "Exact match";
+    if (type === "high") return "High confidence match";
+    if (type === "medium") return "Medium confidence – looks right";
+    if (type === "low") return "Low confidence – using search results";
+    if (type === "very_low") return "Very low confidence – using search only";
+    if (c >= 90) return "Exact match";
+    if (c >= 75) return "High confidence match";
+    if (c >= 50) return "Medium confidence";
+    return "Low confidence – using search";
+  };
 
-    const spotifyHref = highConfidence && results.spotifyUrl
-      ? results.spotifyUrl
-      : `https://open.spotify.com/search/${encodeURIComponent(
-          results.cleanedQuery || ""
-        )}`;
-
-    const appleHref = highConfidence && results.appleMusicUrl
-      ? results.appleMusicUrl
-      : `https://music.apple.com/search?term=${encodeURIComponent(
-          results.cleanedQuery || ""
-        )}`;
-
-    const soundCloudHref =
-      results.soundCloudUrl ||
-      `https://soundcloud.com/search?q=${encodeURIComponent(
-        results.cleanedQuery || ""
-      )}`;
-
-    const spotifyLabel = highConfidence
-      ? `Spotify • ${confidence}% match`
-      : `Spotify • ${confidence}% • search`;
-
-    const appleLabel = highConfidence
-      ? `Apple Music • ${confidence}% match`
-      : `Apple Music • ${confidence}% • search`;
-
-    return (
-      <div className="result card">
-        <h2>Results</h2>
-
-        {results.youtubeTitle && (
-          <p>
-            <strong>YouTube Title:</strong> {results.youtubeTitle}
-          </p>
-        )}
-
-        {results.cleanedQuery && (
-          <p>
-            <strong>Search Query:</strong> {results.cleanedQuery}
-          </p>
-        )}
-
-        <div className="links">
-          <a
-            className={`link-button spotify ${
-              highConfidence ? "high-confidence" : "low-confidence"
-            }`}
-            href={spotifyHref}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {spotifyLabel}
-          </a>
-
-          <a
-            className={`link-button apple ${
-              highConfidence ? "high-confidence" : "low-confidence"
-            }`}
-            href={appleHref}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {appleLabel}
-          </a>
-
-          <a
-            className="link-button soundcloud"
-            href={soundCloudHref}
-            target="_blank"
-            rel="noreferrer"
-          >
-            SoundCloud • search
-          </a>
-        </div>
-      </div>
-    );
+  const isSearchMode = () => {
+    if (!results) return false;
+    return (results.confidence ?? 0) < 74;
   };
 
   return (
     <div className="app">
       <h1>YouTube → Music Link Converter</h1>
-      <p className="subtitle">
-        Paste a YouTube link and get Spotify & Apple Music matches.
-      </p>
+      <p className="subtitle">Paste a YouTube link and get Spotify &amp; Apple Music matches.</p>
 
       <form onSubmit={handleConvert} className="card">
         <label htmlFor="youtube">YouTube URL</label>
@@ -147,7 +82,61 @@ function App() {
 
       {error && <p className="error">{error}</p>}
 
-      {renderResults()}
+      {results && (
+        <div className="result card">
+          <h2>Results</h2>
+
+          <p>
+            <strong>YouTube Title:</strong> {results.youtubeTitle}
+          </p>
+          <p>
+            <strong>Search Query:</strong> {results.cleanedQuery}
+          </p>
+
+          <div className={`match-pill match-pill-${results.matchType || "unknown"}`}>
+            {getConfidenceLabel()} • {results.confidence ?? 0}% match
+          </div>
+
+          <div className="links">
+            {results.spotifyUrl && (
+              <a
+                className="link-button spotify"
+                href={results.spotifyUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {isSearchMode()
+                  ? `Spotify • search (${results.confidence ?? 0}%)`
+                  : `Spotify • ${results.confidence ?? 0}% match`}
+              </a>
+            )}
+
+            {results.appleMusicUrl && (
+              <a
+                className="link-button apple"
+                href={results.appleMusicUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {isSearchMode()
+                  ? `Apple Music • search (${results.confidence ?? 0}%)`
+                  : `Apple Music • ${results.confidence ?? 0}% match`}
+              </a>
+            )}
+
+            {results.soundCloudUrl && (
+              <a
+                className="link-button soundcloud"
+                href={results.soundCloudUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                SoundCloud • search
+              </a>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
