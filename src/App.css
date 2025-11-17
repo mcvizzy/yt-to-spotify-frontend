@@ -121,7 +121,6 @@ button:disabled {
   color: #cbd5e1;
 }
 
-/* Variants by matchType */
 .match-pill-exact {
   border-color: #22c55e;
   background: rgba(34, 197, 94, 0.15);
@@ -174,37 +173,7 @@ button:disabled {
 .link-button.soundcloud {
   background: #ff7700;
 }
-/* Install Instructions Banner */
-.install-banner {
-  background: #1e293b;
-  border: 1px solid #334155;
-  padding: 1.25rem;
-  border-radius: 0.75rem;
-  margin: 1rem auto 1.5rem auto;
-  max-width: 600px;
-  color: #e2e8f0;
-  line-height: 1.4;
-}
 
-.install-banner p {
-  margin: 0.3rem 0;
-  font-size: 0.95rem;
-}
-
-.dismiss-install {
-  margin-top: 0.7rem;
-  padding: 0.5rem 1rem;
-  background: #475569;
-  color: white;
-  border-radius: 0.5rem;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.dismiss-install:hover {
-  background: #64748b;
-}
 /* Subtle Install Hint */
 .install-hint {
   background: #1e293b;
