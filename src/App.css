@@ -50,7 +50,9 @@ button {
   border-radius: 0.5rem;
   font-weight: bold;
   cursor: pointer;
-  color: #0f172a;
+  color: white; /* readable text */
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4); /* more contrast */
+  font-weight: 700;
 }
 
 button:disabled {
