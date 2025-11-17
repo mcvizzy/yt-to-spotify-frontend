@@ -1,0 +1,93 @@
+.app {
+  min-height: 100vh;
+  padding: 2rem;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: system-ui, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+.subtitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #94a3b8;
+}
+
+.card {
+  background: #1e293b;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid #334155;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+input {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 0.5rem;
+  border: none;
+  margin-bottom: 1rem;
+  background: #0f172a;
+  color: #fff;
+}
+
+button {
+  width: 100%;
+  padding: 0.9rem;
+  background: #22c55e;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #0f172a;
+}
+
+.error {
+  color: #f87171;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.result {
+  margin-top: 2rem;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.link-button {
+  display: block;
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+}
+
+.link-button.spotify {
+  background: #1db954;
+}
+
+.link-button.apple {
+  background: #fa586a;
+}
+
+.link-button.soundcloud {
+  background: #ff7700;
+}
