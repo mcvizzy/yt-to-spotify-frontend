@@ -40,10 +40,96 @@ function App() {
     }
   };
 
+  const renderResults = () => {
+    if (!results) return null;
+
+    const confidence = results.confidence ?? 0;
+    const highConfidence = confidence >= 75;
+
+    const spotifyHref = highConfidence && results.spotifyUrl
+      ? results.spotifyUrl
+      : `https://open.spotify.com/search/${encodeURIComponent(
+          results.cleanedQuery || ""
+        )}`;
+
+    const appleHref = highConfidence && results.appleMusicUrl
+      ? results.appleMusicUrl
+      : `https://music.apple.com/search?term=${encodeURIComponent(
+          results.cleanedQuery || ""
+        )}`;
+
+    const soundCloudHref =
+      results.soundCloudUrl ||
+      `https://soundcloud.com/search?q=${encodeURIComponent(
+        results.cleanedQuery || ""
+      )}`;
+
+    const spotifyLabel = highConfidence
+      ? `Spotify • ${confidence}% match`
+      : `Spotify • ${confidence}% • search`;
+
+    const appleLabel = highConfidence
+      ? `Apple Music • ${confidence}% match`
+      : `Apple Music • ${confidence}% • search`;
+
+    return (
+      <div className="result card">
+        <h2>Results</h2>
+
+        {results.youtubeTitle && (
+          <p>
+            <strong>YouTube Title:</strong> {results.youtubeTitle}
+          </p>
+        )}
+
+        {results.cleanedQuery && (
+          <p>
+            <strong>Search Query:</strong> {results.cleanedQuery}
+          </p>
+        )}
+
+        <div className="links">
+          <a
+            className={`link-button spotify ${
+              highConfidence ? "high-confidence" : "low-confidence"
+            }`}
+            href={spotifyHref}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {spotifyLabel}
+          </a>
+
+          <a
+            className={`link-button apple ${
+              highConfidence ? "high-confidence" : "low-confidence"
+            }`}
+            href={appleHref}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {appleLabel}
+          </a>
+
+          <a
+            className="link-button soundcloud"
+            href={soundCloudHref}
+            target="_blank"
+            rel="noreferrer"
+          >
+            SoundCloud • search
+          </a>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="app">
       <h1>YouTube → Music Link Converter</h1>
-      <p className="subtitle">Convert any YouTube video into platform links.</p>
+      <p className="subtitle">
+        Paste a YouTube link and get Spotify & Apple Music matches.
+      </p>
 
       <form onSubmit={handleConvert} className="card">
         <label htmlFor="youtube">YouTube URL</label>
@@ -61,53 +147,7 @@ function App() {
 
       {error && <p className="error">{error}</p>}
 
-      {results && (
-        <div className="result card">
-          <h2>Results</h2>
-
-          <p>
-            <strong>YouTube Title:</strong> {results.youtubeTitle}
-          </p>
-          <p>
-            <strong>Search Query:</strong> {results.cleanedQuery}
-          </p>
-
-          <div className="links">
-            {results.spotifyUrl && (
-              <a
-                className="link-button spotify"
-                href={results.spotifyUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Open in Spotify
-              </a>
-            )}
-
-            {results.appleMusicUrl && (
-              <a
-                className="link-button apple"
-                href={results.appleMusicUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Open in Apple Music
-              </a>
-            )}
-
-            {results.soundCloudUrl && (
-              <a
-                className="link-button soundcloud"
-                href={results.soundCloudUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Search on SoundCloud
-              </a>
-            )}
-          </div>
-        </div>
-      )}
+      {renderResults()}
     </div>
   );
 }
