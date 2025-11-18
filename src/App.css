@@ -17,16 +17,16 @@
   z-index: -1;
 }
 
+/* Page fade-in */
 .fade-in {
   animation: fadeIn 1.1s ease-out both;
 }
-
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Title glow */
+/* Title */
 .title-glow {
   text-align: center;
   font-size: 2rem;
@@ -45,7 +45,7 @@
 .card {
   background: #1e293bdd;
   padding: 1.5rem;
-  border-radius: 0.75rem;
+  border-radius: 0.85rem;
   border: 1px solid #2f3e5c;
   max-width: 600px;
   margin: 0 auto;
@@ -55,21 +55,24 @@
   box-shadow: 0 0 15px #00ffff40, 0 0 25px #ff00ff30;
 }
 
-/* Inputs */
+/* Label */
 label {
   display: block;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.4rem;
 }
 
+/* >>> FIXED SEARCH BAR <<< */
 input {
   width: 100%;
-  padding: 0.9rem;
-  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;        /* balanced padding */
+  border-radius: 0.55rem;       /* smaller radius fits card */
   border: none;
   margin-bottom: 1rem;
   background: #0f172a;
   color: white;
+  box-sizing: border-box;       /* fixes overflow issues */
   outline: 2px solid #334155;
+  height: 48px;                 /* perfect uniform height */
 }
 
 input:focus {
@@ -83,7 +86,7 @@ input:focus {
   background: #22c55e;
   color: black;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 0.55rem;
   font-weight: bold;
   cursor: pointer;
   font-size: 1.1rem;
@@ -95,7 +98,6 @@ input:focus {
   justify-content: center;
   gap: 4px;
 }
-
 .soundwave span {
   width: 6px;
   height: 10px;
@@ -103,7 +105,6 @@ input:focus {
   display: inline-block;
   animation: wave 0.9s infinite ease-in-out;
 }
-
 .soundwave span:nth-child(2) { animation-delay: 0.1s; }
 .soundwave span:nth-child(3) { animation-delay: 0.2s; }
 .soundwave span:nth-child(4) { animation-delay: 0.3s; }
@@ -113,7 +114,7 @@ input:focus {
   50% { height: 18px; }
 }
 
-/* Result */
+/* Result section */
 .result {
   margin-top: 2rem;
 }
@@ -177,6 +178,7 @@ input:focus {
 .apple { background: #fa586a; }
 .soundcloud { background: #ff7700; }
 
+/* Errors */
 .error {
   color: #f87171;
   text-align: center;
