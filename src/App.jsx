@@ -40,26 +40,12 @@ function App() {
     }
   };
 
-  const getConfidenceLabel = () => {
-    if (!results) return "";
-    const c = results.confidence ?? 0;
-    const type = results.matchType;
-
-    if (type === "exact") return "Exact match";
-    if (type === "high") return "High confidence match";
-    if (type === "medium") return "Medium confidence – looks right";
-    if (type === "low") return "Low confidence – using search";
-    if (type === "very_low") return "Very low confidence – using search";
-
-    if (c >= 90) return "Exact match";
-    if (c >= 75) return "High confidence";
-    if (c >= 50) return "Medium confidence";
-    return "Low confidence – search mode";
-  };
-
-  const isSearchMode = () => {
-    if (!results) return false;
-    return (results.confidence ?? 0) < 74;
+  // Color confidence based on strength
+  const confidenceColor = (value) => {
+    if (value >= 90) return "conf-green";
+    if (value >= 75) return "conf-yellow";
+    if (value >= 50) return "conf-orange";
+    return "conf-red";
   };
 
   return (
@@ -90,12 +76,11 @@ function App() {
           <p><strong>YouTube Title:</strong> {results.youtubeTitle}</p>
           <p><strong>Search Query:</strong> {results.cleanedQuery}</p>
 
-          <div className={`match-pill match-pill-${results.matchType || "unknown"}`}>
-            {getConfidenceLabel()} • {results.confidence ?? 0}%
-          </div>
+          <p className={`confidence-display ${confidenceColor(results.confidence)}`}>
+            {results.confidence}% match confidence
+          </p>
 
           <div className="links">
-            {/* Spotify */}
             {results.spotifyUrl && (
               <a
                 className="link-button spotify"
@@ -103,13 +88,10 @@ function App() {
                 target="_blank"
                 rel="noreferrer"
               >
-                {isSearchMode()
-                  ? `Spotify • search (${results.confidence ?? 0}%)`
-                  : `Spotify • ${results.confidence ?? 0}%`}
+                Open in Spotify
               </a>
             )}
 
-            {/* Apple Music */}
             {results.appleMusicUrl && (
               <a
                 className="link-button apple"
@@ -117,13 +99,10 @@ function App() {
                 target="_blank"
                 rel="noreferrer"
               >
-                {isSearchMode()
-                  ? `Apple • search (${results.confidence ?? 0}%)`
-                  : `Apple • ${results.confidence ?? 0}%`}
+                Open in Apple Music
               </a>
             )}
 
-            {/* SoundCloud */}
             {results.soundCloudUrl && (
               <a
                 className="link-button soundcloud"
@@ -131,7 +110,7 @@ function App() {
                 target="_blank"
                 rel="noreferrer"
               >
-                SoundCloud • search
+                Search on SoundCloud
               </a>
             )}
           </div>
