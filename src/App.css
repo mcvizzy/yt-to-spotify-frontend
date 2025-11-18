@@ -1,32 +1,61 @@
+/* Background */
 .app {
   min-height: 100vh;
   padding: 2rem;
-  background: #0f172a;
-  color: #e2e8f0;
   font-family: system-ui, sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  color: #e2e8f0;
 }
 
-h1 {
+.vaporwave-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 20%, #ff00ff40, transparent 60%),
+              radial-gradient(circle at 80% 80%, #00ffff30, transparent 60%);
+  filter: blur(40px);
+  z-index: -1;
+}
+
+.fade-in {
+  animation: fadeIn 1.1s ease-out both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Title glow */
+.title-glow {
   text-align: center;
-  margin-bottom: 0.5rem;
   font-size: 2rem;
+  color: #fff;
+  text-shadow: 0 0 12px #ff00ff, 0 0 30px #ff00ff;
+  margin-bottom: 0.5rem;
 }
 
 .subtitle {
   text-align: center;
+  opacity: 0.7;
   margin-bottom: 2rem;
-  color: #94a3b8;
 }
 
+/* Cards */
 .card {
-  background: #1e293b;
+  background: #1e293bdd;
   padding: 1.5rem;
   border-radius: 0.75rem;
-  border: 1px solid #334155;
+  border: 1px solid #2f3e5c;
   max-width: 600px;
   margin: 0 auto;
 }
 
+.neon-card {
+  box-shadow: 0 0 15px #00ffff40, 0 0 25px #ff00ff30;
+}
+
+/* Inputs */
 label {
   display: block;
   margin-bottom: 0.3rem;
@@ -34,42 +63,95 @@ label {
 
 input {
   width: 100%;
-  padding: 0.8rem;
+  padding: 0.9rem;
   border-radius: 0.5rem;
   border: none;
   margin-bottom: 1rem;
   background: #0f172a;
-  color: #fff;
+  color: white;
+  outline: 2px solid #334155;
 }
 
-button {
+input:focus {
+  outline: 2px solid #ff00ff;
+}
+
+/* Convert button */
+.convert-btn {
   width: 100%;
-  padding: 0.9rem;
+  padding: 1rem;
   background: #22c55e;
+  color: black;
   border: none;
   border-radius: 0.5rem;
   font-weight: bold;
   cursor: pointer;
-  color: #0f172a;
+  font-size: 1.1rem;
 }
 
-.error {
-  color: #f87171;
-  text-align: center;
-  margin-top: 1rem;
+/* Soundwave loader */
+.soundwave {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
 }
 
+.soundwave span {
+  width: 6px;
+  height: 10px;
+  background: black;
+  display: inline-block;
+  animation: wave 0.9s infinite ease-in-out;
+}
+
+.soundwave span:nth-child(2) { animation-delay: 0.1s; }
+.soundwave span:nth-child(3) { animation-delay: 0.2s; }
+.soundwave span:nth-child(4) { animation-delay: 0.3s; }
+
+@keyframes wave {
+  0%, 100% { height: 8px; }
+  50% { height: 18px; }
+}
+
+/* Result */
 .result {
   margin-top: 2rem;
 }
 
-.confidence-display {
-  margin-top: 1rem;
-  font-size: 1.1rem;
-  font-weight: bold;
+.result-title {
   text-align: center;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
 }
 
+/* Confidence bar */
+.confidence-meter {
+  width: 100%;
+  height: 12px;
+  background: #0f172a;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.confidence-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ffff, #ff00ff);
+  animation: slideIn 0.7s ease-out;
+}
+
+@keyframes slideIn {
+  from { width: 0; }
+}
+
+/* Confidence text */
+.confidence-text {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* Buttons */
 .links {
   display: flex;
   flex-direction: column;
@@ -80,21 +162,23 @@ button {
 .link-button {
   display: block;
   text-align: center;
-  padding: 0.75rem;
+  padding: 0.9rem;
   border-radius: 0.5rem;
   font-weight: bold;
   text-decoration: none;
   color: white;
 }
 
-.link-button.spotify {
-  background: #1db954;
+.neon-btn {
+  box-shadow: 0 0 12px #ffffff30, 0 0 20px #ffffff20 inset;
 }
 
-.link-button.apple {
-  background: #fa586a;
-}
+.spotify { background: #1db954; }
+.apple { background: #fa586a; }
+.soundcloud { background: #ff7700; }
 
-.link-button.soundcloud {
-  background: #ff7700;
+.error {
+  color: #f87171;
+  text-align: center;
+  margin-top: 1rem;
 }
