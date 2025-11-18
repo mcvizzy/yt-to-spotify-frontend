@@ -13,7 +13,7 @@ function App() {
     setResults(null);
 
     if (!youtubeUrl.trim()) {
-      setError("Please paste a YouTube or TikTok link.");
+      setError("Please paste a YouTube link.");
       return;
     }
 
@@ -40,129 +40,78 @@ function App() {
     }
   };
 
-  const confidenceClass = (value) => {
-    if (value >= 90) return "conf-green";
-    if (value >= 75) return "conf-yellow";
-    if (value >= 50) return "conf-orange";
-    return "conf-red";
-  };
-
-  const platformLabel = (platform) => {
-    if (platform === "youtube") return "YouTube link detected";
-    if (platform === "tiktok") return "TikTok sound detected";
-    return "Unknown source";
-  };
-
   return (
     <div className="app">
-      <div className="app-inner">
-        <h1 className="app-title">YT → Music Converter</h1>
-        <p className="subtitle">
-          Paste a YouTube or TikTok link and get Spotify &amp; Apple Music matches.
-        </p>
+      <h1>YouTube → Music Link Converter</h1>
+      <p className="subtitle">Paste a YouTube link and get Spotify & Apple Music matches.</p>
 
-        <form onSubmit={handleConvert} className="card input-card">
-          <label htmlFor="youtube">Paste link</label>
-          <div className="input-row">
-            <input
-              id="youtube"
-              type="url"
-              placeholder="https://www.youtube.com/watch?v=... or https://www.tiktok.com/..."
-              value={youtubeUrl}
-              onChange={(e) => setYoutubeUrl(e.target.value)}
-            />
-            <button disabled={loading} type="submit">
-              {loading ? "Converting..." : "Convert"}
-            </button>
-          </div>
-          <p className="input-hint">
-            Works with both <strong>YouTube videos</strong> and{" "}
-            <strong>TikTok sounds</strong>.
+      <form onSubmit={handleConvert} className="card">
+        <label htmlFor="youtube">YouTube URL</label>
+        <input
+          id="youtube"
+          type="url"
+          placeholder="https://www.youtube.com/watch?v=..."
+          value={youtubeUrl}
+          onChange={(e) => setYoutubeUrl(e.target.value)}
+        />
+        <button disabled={loading} type="submit">
+          {loading ? "Converting..." : "Convert"}
+        </button>
+      </form>
+
+      {error && <p className="error">{error}</p>}
+
+      {results && (
+        <div className="result card">
+          <h2>Results</h2>
+
+          <p>
+            <strong>YouTube Title:</strong> {results.youtubeTitle}
           </p>
-        </form>
+          <p>
+            <strong>Search Query:</strong> {results.cleanedQuery}
+          </p>
 
-        {error && <p className="error">{error}</p>}
+          <p className="confidence-display">
+            {results.confidence}% match confidence
+          </p>
 
-        {results && (
-          <div className="card result-card">
-            <div className="platform-pill">
-              {platformLabel(results.platform)}
-            </div>
-
-            <h2>Match Result</h2>
-
-            <p>
-              <strong>Title:</strong> {results.youtubeTitle}
-            </p>
-            {results.artist && (
-              <p>
-                <strong>Artist:</strong> {results.artist}
-              </p>
-            )}
-            <p>
-              <strong>Search Query:</strong> {results.cleanedQuery}
-            </p>
-
-            <div className="confidence-section">
-              <div
-                className={`confidence-text ${confidenceClass(
-                  results.confidence
-                )}`}
+          <div className="links">
+            {results.spotifyUrl && (
+              <a
+                className="link-button spotify"
+                href={results.spotifyUrl}
+                target="_blank"
+                rel="noreferrer"
               >
-                {results.confidence}% match confidence
-              </div>
-              <div className="confidence-bar">
-                <div
-                  className={`confidence-bar-fill ${confidenceClass(
-                    results.confidence
-                  )}`}
-                  style={{
-                    width: `${Math.min(
-                      Math.max(results.confidence || 0, 0),
-                      100
-                    )}%`,
-                  }}
-                />
-              </div>
-            </div>
+                Open in Spotify
+              </a>
+            )}
 
-            <div className="links">
-              {results.spotifyUrl && (
-                <a
-                  className="link-button spotify"
-                  href={results.spotifyUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Open in Spotify
-                </a>
-              )}
+            {results.appleMusicUrl && (
+              <a
+                className="link-button apple"
+                href={results.appleMusicUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open in Apple Music
+              </a>
+            )}
 
-              {results.appleMusicUrl && (
-                <a
-                  className="link-button apple"
-                  href={results.appleMusicUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Open in Apple Music
-                </a>
-              )}
-
-              {results.soundCloudUrl && (
-                <a
-                  className="link-button soundcloud"
-                  href={results.soundCloudUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Search on SoundCloud
-                </a>
-              )}
-            </div>
+            {results.soundCloudUrl && (
+              <a
+                className="link-button soundcloud"
+                href={results.soundCloudUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Search on SoundCloud
+              </a>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
